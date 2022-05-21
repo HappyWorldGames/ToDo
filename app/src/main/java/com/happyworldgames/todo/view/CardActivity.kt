@@ -1,5 +1,6 @@
 package com.happyworldgames.todo.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -15,16 +16,60 @@ class CardActivity : AppCompatActivity() {
     private val activityCardBinding by lazy { ActivityCardBinding.inflate(layoutInflater) }
 
     private val cardInfo by lazy { boardInfo.lists[posList].cards[posCard] }
-    private val boardInfo by lazy{ BoardInfo.getBoardInfo(this, intent.getStringExtra("id_board")!!) }
+    private val boardInfo by lazy{BoardInfo.getBoardInfo(this, intent.getStringExtra("id_board")!!) }
     private val posList by lazy { intent.getIntExtra("pos_list", -1) }
     private val posCard by lazy { intent.getIntExtra("pos_card", -1) }
 
     private var actionMode: ActionMode? = null
-    private val supportActionMode = object : ActionMode.Callback {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(activityCardBinding.root)
+        title = ""
+
+        activityCardBinding.titleName.setText(cardInfo.name)
+        activityCardBinding.titleName.setOnFocusChangeListener { view, b ->
+            if(actionMode == null && b) actionMode = startSupportActionMode(
+                SupportActionMode(this, 0, activityCardBinding.titleName))
+            (view as EditText).isCursorVisible = b
+        }
+
+        activityCardBinding.description.setText(cardInfo.description)
+        activityCardBinding.description.setOnFocusChangeListener { view, b ->
+            if(actionMode == null && b) actionMode = startSupportActionMode(
+                SupportActionMode(this, 1, activityCardBinding.description))
+            (view as EditText).isCursorVisible = b
+        }
+    }
+
+    inner class SupportActionMode(private val context: Context, private val type: Int,
+                                  private val editText: EditText) : ActionMode.Callback {
+        private val saveID = 2
+
+        private val editTextIdsArray = arrayOf(
+            R.string.edit_title_name,
+            R.string.edit_description
+        )
+
+        private fun setData(data: String) {
+            when(type){
+                0 -> cardInfo.name = data
+                1 -> cardInfo.description = data
+            }
+        }
+        private fun getData(): String {
+            return when(type){
+                0 -> cardInfo.name
+                1 -> cardInfo.description
+                else -> ""
+            }
+        }
+
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             if(mode == null) return false
             //mode.menuInflater.inflate(R.menu., menu)
-            mode.title = "Test"
+            menu?.add(0, saveID, 0, context.getString(R.string.save))
+            mode.title = context.getString(editTextIdsArray[type])
             return true
         }
 
@@ -33,28 +78,28 @@ class CardActivity : AppCompatActivity() {
         }
 
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            return false
+            if(item == null) return false
+            return when(item.itemId){
+                saveID -> {
+                    setData(editText.text.toString())
+                    DataInterface.getDataInterface(context)
+                        .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
+                    destroy()
+                    mode?.finish()
+                    true
+                }
+                else -> false
+            }
         }
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-            actionMode = null
-            activityCardBinding.description.clearFocus()
+            editText.setText(getData())
+            destroy()
         }
 
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(activityCardBinding.root)
-        title = cardInfo.name
-
-        activityCardBinding.description.setText(cardInfo.description)
-        activityCardBinding.description.isCursorVisible = false
-        activityCardBinding.description.setOnFocusChangeListener { view, b ->
-            if(actionMode == null && b) actionMode = startSupportActionMode(supportActionMode)
-            (view as EditText).isCursorVisible = b
-            cardInfo.description = view.text.toString()
-            if(!b) DataInterface.getDataInterface(this).saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
+        private fun destroy() {
+            actionMode = null
+            editText.clearFocus()
         }
     }
 }

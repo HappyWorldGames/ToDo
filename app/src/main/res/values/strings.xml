@@ -5,6 +5,7 @@
     <string name="create">Create</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 
     <!-- MainActivity -->
     <string name="board_name">Board Name</string>
@@ -15,5 +16,8 @@
     <string name="card_name">Card Name</string>
     <string name="create_card">Create Card</string>
     <!-- CardActivity -->
+    <string name="title_name">Title Name</string>
     <string name="description">Description</string>
+    <string name="edit_title_name">Edit Title</string>
+    <string name="edit_description">Edit Description</string>
 </resources>
