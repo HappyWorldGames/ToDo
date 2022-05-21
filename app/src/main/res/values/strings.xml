@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">ToDo</string>
+
+    <string name="add">Add</string>
+    <string name="create">Create</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- MainActivity -->
+    <string name="board_name">Board Name</string>
+    <string name="create_board">Create Board</string>
+    <!-- BoardRecyclerViewAdapter -->
+    <string name="list_name">List Name</string>
+    <string name="create_list">Create List</string>
+    <string name="card_name">Card Name</string>
+    <string name="create_card">Create Card</string>
+    <!-- CardActivity -->
+    <string name="description">Description</string>
+</resources>
