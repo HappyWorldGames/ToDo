@@ -2,6 +2,9 @@ package com.happyworldgames.todo.data
 
 import android.content.Context
 import com.happyworldgames.todo.model.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.nio.charset.Charset
 
@@ -13,8 +16,8 @@ class FileSystem(context: Context) : DataInterface {
         val list = dirPath?.listFiles()?: return arrayOf()
         val infoList = arrayListOf<InfoInterface>()
         for(item in list){
-            val textLines = getDataFromFile(item)
-            val cl = parseInfo(textLines)
+            val text = getDataFromFile(item)
+            val cl = Json.decodeFromString<BoardInfo>(text)
             if(cl.id != "" && cl.name != "") infoList.add(cl)
         }
         return infoList.toArray(arrayOfNulls(infoList.size))
@@ -23,35 +26,19 @@ class FileSystem(context: Context) : DataInterface {
         val infoFolder = File(dirPath, id)
         var text = getDataFromFile(infoFolder)
 
-        var info = parseInfo(text)
-        var textLines = text.split("\n")
-
-        val boardInfo = BoardInfo(info.id, info.position, info.name)
+        val boardInfo = Json.decodeFromString<BoardInfo>(text)
 
         for(listFolder in infoFolder.listFiles()!!) {
             if(listFolder.isFile) continue
             text = getDataFromFile(listFolder)
 
-            info = parseInfo(text)
-            val listInfo = ListInfo(info.id, info.position, info.name)
+            val listInfo = Json.decodeFromString<ListInfo>(text)
 
             for(cardFolder in listFolder.listFiles()!!){
                 if(cardFolder.isFile) continue
                 text = getDataFromFile(cardFolder)
 
-                info = parseInfo(text)
-                textLines = text.split("\n")
-
-                var description = ""
-                for(line in textLines){
-                    when{
-                        line.startsWith("description") -> {
-                            description = line.split(" ")[1]
-                        }
-                    }
-                }
-
-                val cardInfo = CardInfo(info.id, info.position, info.name, description)
+                val cardInfo = Json.decodeFromString<CardInfo>(text)
                 listInfo.cards.add(cardInfo)
             }
 
@@ -65,26 +52,25 @@ class FileSystem(context: Context) : DataInterface {
         val folder = File(dirPath, boardInfo.id)
         folder.mkdirs()
         val file = File(folder, ".info")
-        val text = collectInfo(boardInfo)
+        val text = Json.encodeToString(boardInfo)
 
-        saveDataOnFile(file, text.toString())
+        saveDataOnFile(file, text)
     }
     override fun saveList(boardInfo: BoardInfo, listInfo: ListInfo) {
         val folder = File(dirPath, boardInfo.id + "/" + listInfo.id)
         folder.mkdirs()
         val file = File(folder, ".info")
-        val text = collectInfo(listInfo)
+        val text = Json.encodeToString(listInfo)
 
-        saveDataOnFile(file, text.toString())
+        saveDataOnFile(file, text)
     }
     override fun saveCard(idBoard: String, idList: String, cardInfo: CardInfo) {
         val folder = File(dirPath, idBoard + "/" + idList + "/" + cardInfo.id)
         folder.mkdirs()
         val file = File(folder, ".info")
-        val text = collectInfo(cardInfo)
-        text.append("description ").append(cardInfo.description).appendLine()
+        val text = Json.encodeToString(cardInfo)
 
-        saveDataOnFile(file, text.toString())
+        saveDataOnFile(file, text)
     }
 
     override fun deleteBoard(id: String) {
@@ -100,37 +86,7 @@ class FileSystem(context: Context) : DataInterface {
         val file = if(filePath.isDirectory) File(filePath, ".info") else filePath
         return file.writeText(data, Charset.forName(charset))
     }
-    private fun parseInfo(text: String): InfoInterface {
-        val textLines = text.split("\n")
-        val cl = object : InfoInterface {
-            override var id: String = ""
-            override var position: Int = -1
-            override var name: String = ""
-        }
-        for(line in textLines){
-            when {
-                line.startsWith("id") -> {
-                    cl.id = line.split(" ")[1]
-                }
-                line.startsWith("position") -> {
-                    cl.position = line.split(" ")[1].toInt()
-                }
-                line.startsWith("name") -> {
-                    cl.name = line.split(" ")[1]
-                }
-            }
-        }
-        return cl
-    }
-    private fun collectInfo(infoInterface: InfoInterface): StringBuilder {
-        val text = StringBuilder()
 
-        text.append("id ").append(infoInterface.id).appendLine()
-        text.append("position ").append(infoInterface.position).appendLine()
-        text.append("name ").append(infoInterface.name).appendLine()
-
-        return text
-    }
     private fun delete(file: File) {
         if(file.isDirectory) file.listFiles()!!.forEach { f ->
             delete(f)

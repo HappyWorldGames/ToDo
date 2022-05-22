@@ -1,4 +1,8 @@
 package com.happyworldgames.todo.model
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+
+@Serializable
 data class ListInfo(override var id: String, override var position: Int, override var name: String,
-               val cards: ArrayList<CardInfo> = arrayListOf()): InfoInterface
+               @Transient val cards: ArrayList<CardInfo> = arrayListOf()): InfoInterface
