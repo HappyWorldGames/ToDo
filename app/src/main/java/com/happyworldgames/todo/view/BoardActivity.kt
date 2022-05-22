@@ -19,6 +19,7 @@ class BoardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activityBoardBinding.root)
+        title = boardInfo.name
 
         activityBoardBinding.viewPager.adapter = adapter
         activityBoardBinding.viewPager.offscreenPageLimit = 3
