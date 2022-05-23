@@ -14,7 +14,7 @@ class BoardActivity : AppCompatActivity() {
 
     private val dataInterface by lazy { DataInterface.getDataInterface(this) }
     private val boardInfo by lazy { BoardInfo.getBoardInfo(this, intent.getStringExtra("id")!!) }
-    private val adapter by lazy { BoardRecyclerViewAdapter(dataInterface, boardInfo) }
+    private val adapter by lazy { BoardRecyclerViewAdapter(this, dataInterface, boardInfo) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

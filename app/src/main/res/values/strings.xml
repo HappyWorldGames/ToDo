@@ -13,6 +13,7 @@
     <!-- BoardRecyclerViewAdapter -->
     <string name="list_name">List Name</string>
     <string name="create_list">Create List</string>
+    <string name="edit_list_name">Edit List Name</string>
     <string name="card_name">Card Name</string>
     <string name="create_card">Create Card</string>
     <!-- CardActivity -->

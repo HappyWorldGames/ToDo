@@ -27,6 +27,7 @@
             android:layout_marginTop="8dp"
             android:autofillHints=""
             android:background="#880E4F"
+            android:cursorVisible="false"
             android:hint="@string/add"
             android:inputType="textFilter"
             android:minHeight="48dp"

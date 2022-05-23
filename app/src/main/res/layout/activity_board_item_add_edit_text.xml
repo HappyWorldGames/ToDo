@@ -9,11 +9,16 @@
     android:layout_marginEnd="@dimen/pageMarginAndOffset"
     android:layout_marginBottom="16dp">
 
-    <Button
-        android:id="@+id/button"
+    <EditText
+        android:id="@+id/edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/add"
+        android:hint="@string/list_name"
+        android:importantForAutofill="no"
+        android:inputType="textFilter"
+        android:minHeight="48dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constrainedHeight="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

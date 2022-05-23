@@ -1,7 +1,7 @@
 package com.happyworldgames.todo.model
 
 interface InfoInterface {
-    var id: String
-    var position: Int
-    var name: String
+    var id: String      // name folder
+    var position: Int   // position view
+    var name: String    // name view
 }
