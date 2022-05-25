@@ -34,6 +34,10 @@ class SupportActionModeForEditText(
             if(!hasFocus) actionMode?.finish()                     // close action mode if has`t focus
         }
 
+        fun onKeyListener(runSave: () -> Unit) {
+            TODO("Обработка enter кнопки, done")
+            runSave()
+        }
         /*
             Show or close soft keyboard
          */

@@ -13,15 +13,21 @@ import com.happyworldgames.todo.model.DataInterface
 class CardRecyclerViewAdapter(private val dataInterface: DataInterface, private val boardInfo: BoardInfo,
                               private val posList: Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    override fun getItemViewType(position: Int): Int {
+        return R.layout.activity_board_item_card
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_board_item_card, parent,
+        val view = LayoutInflater.from(parent.context).inflate(viewType, parent,
             false)
-        return MainViewHolder(view)
+        return when(viewType){
+            else -> CardViewHolder(view)
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val cardInfo = boardInfo.lists[posList].cards[position]
-        val activityBoardItemCardBinding = (holder as MainViewHolder).mainView
+        val activityBoardItemCardBinding = (holder as CardViewHolder).mainView
 
         activityBoardItemCardBinding.textView.text = cardInfo.name
 
@@ -38,7 +44,7 @@ class CardRecyclerViewAdapter(private val dataInterface: DataInterface, private 
 
     override fun getItemCount(): Int = boardInfo.lists[posList].cards.size
 
-    class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val mainView = ActivityBoardItemCardBinding.bind(view)
     }
 }

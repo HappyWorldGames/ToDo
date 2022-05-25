@@ -57,20 +57,20 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toTopOf="@+id/add_card"
+            app:layout_constraintBottom_toTopOf="@id/bottom_fragment"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/list_name" />
 
-        <Button
-            android:id="@+id/add_card"
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:id="@+id/bottom_fragment"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/add"
-            android:textColor="#CFD8DC"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
