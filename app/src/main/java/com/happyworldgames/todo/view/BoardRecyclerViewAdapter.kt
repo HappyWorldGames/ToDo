@@ -143,7 +143,6 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                     notifyItemChanged(position)
                 }
             }else {
-                // TODO("Создать единый view куда добавляется кнопка или поле для ввода")
                 val addEditTextLayout = ActivityBoardItemListAddEditTextBinding
                     .inflate(LayoutInflater.from(context))
                 activityBoardItemListBinding.bottomFragment.addView(addEditTextLayout.root)
