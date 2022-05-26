@@ -49,29 +49,37 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                     notifyItemChanged(position)
                 }
             }else {
-                val listInfo = ListInfo(UUID.randomUUID().toString(), position, "")
                 val activityBoardItemAddEditTextViewHolder = (holder as AddEditTextViewHolder).mainView
-                activityBoardItemAddEditTextViewHolder.editText.setOnFocusChangeListener { view, hasFocus ->
-                    SupportActionModeForEditText.onFocusChangeListener(appCompatActivity, view, hasFocus,
-                        SupportActionModeForEditText(
-                            R.string.create_list,
-                            R.string.create,
-                            activityBoardItemAddEditTextViewHolder.editText,
-                            fun(data: String){ listInfo.name = data },
-                            fun (): String = listInfo.name,
-                            fun () {
-                                boardInfo.lists.add(listInfo)
-                                DataInterface.getDataInterface(
-                                    activityBoardItemAddEditTextViewHolder.root.context
-                                ).saveList(boardInfo, listInfo)
-                                notifyItemInserted(itemCount)
-                            }
-                        )
-                    )
-                    if(!hasFocus) {
-                        isAddListEditText = false
-                        notifyItemChanged(position)
+
+                val listInfo = ListInfo(UUID.randomUUID().toString(), position, "")
+                val supportActionModeForEditText = SupportActionModeForEditText(
+                    R.string.create_list,
+                    R.string.create,
+                    activityBoardItemAddEditTextViewHolder.editText,
+                    fun(data: String){ listInfo.name = data },
+                    fun (): String = listInfo.name,
+                    fun () {
+                        boardInfo.lists.add(listInfo)
+                        DataInterface.getDataInterface(
+                            activityBoardItemAddEditTextViewHolder.root.context
+                        ).saveList(boardInfo, listInfo)
+                        notifyItemInserted(itemCount)
                     }
+                )
+                activityBoardItemAddEditTextViewHolder.editText.setOnFocusChangeListener { view, hasFocus ->
+                    view.post {
+                        SupportActionModeForEditText.onFocusChangeListener(
+                            appCompatActivity, view, hasFocus,
+                            supportActionModeForEditText
+                        )
+                        if(!hasFocus) {
+                            isAddListEditText = false
+                            notifyItemChanged(position)
+                        }
+                    }
+                }
+                activityBoardItemAddEditTextViewHolder.editText.setOnKeyListener { _, keyCode, keyEvent ->
+                    supportActionModeForEditText.onKeyListener(keyCode, keyEvent)
                 }
                 activityBoardItemAddEditTextViewHolder.editText.requestFocus()
                 SupportActionModeForEditText.softKeyBoard(
@@ -81,23 +89,28 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
         }else {
             val context = holder.itemView.context
             val listInfo = boardInfo.lists[position]
-
             val activityBoardItemListBinding = (holder as ListViewHolder).mainView
+
+            val supportActionModeForEditTextZero = SupportActionModeForEditText(
+                R.string.edit_list_name,
+                R.string.save,
+                activityBoardItemListBinding.listName,
+                fun(data: String){ listInfo.name = data },
+                fun (): String = listInfo.name,
+                fun () {
+                    dataInterface.saveList(boardInfo, listInfo)
+                }
+            )
             activityBoardItemListBinding.listName.setText(if(listInfo.name.length > 20)
                 listInfo.name.subSequence(0, 20) else listInfo.name)
             activityBoardItemListBinding.listName.setOnFocusChangeListener { view, hasFocus ->
-                SupportActionModeForEditText.onFocusChangeListener(appCompatActivity, view, hasFocus,
-                    SupportActionModeForEditText(
-                        R.string.edit_list_name,
-                        R.string.save,
-                        activityBoardItemListBinding.listName,
-                        fun(data: String){ listInfo.name = data },
-                        fun (): String = listInfo.name,
-                        fun () {
-                            DataInterface.getDataInterface(context).saveList(boardInfo, listInfo)
-                        }
-                    )
+                SupportActionModeForEditText.onFocusChangeListener(
+                    appCompatActivity, view, hasFocus,
+                    supportActionModeForEditTextZero
                 )
+            }
+            activityBoardItemListBinding.listName.setOnKeyListener { _, keyCode, keyEvent ->
+                supportActionModeForEditTextZero.onKeyListener(keyCode, keyEvent)
             }
 
             activityBoardItemListBinding.more.setOnClickListener {
@@ -131,30 +144,40 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                 }
             }else {
                 // TODO("Создать единый view куда добавляется кнопка или поле для ввода")
-                val addEditTextLayout = ActivityBoardItemListAddEditTextBinding.inflate(LayoutInflater.from(context))
+                val addEditTextLayout = ActivityBoardItemListAddEditTextBinding
+                    .inflate(LayoutInflater.from(context))
                 activityBoardItemListBinding.bottomFragment.addView(addEditTextLayout.root)
 
-                val cardInfo = CardInfo(UUID.randomUUID().toString(), cardAdapter.itemCount, "", "")
+                val cardInfo = CardInfo(
+                    UUID.randomUUID().toString(), cardAdapter.itemCount,
+                    "", ""
+                )
+                val supportActionModeForEditText = SupportActionModeForEditText(
+                    R.string.create_card,
+                    R.string.create,
+                    addEditTextLayout.addEditText,
+                    fun(data: String){ cardInfo.name = data },
+                    fun (): String = cardInfo.name,
+                    fun () {
+                        listInfo.cards.add(cardInfo)
+                        dataInterface.saveCard(boardInfo.id, listInfo.id, cardInfo)
+                        cardAdapter.notifyItemInserted(cardAdapter.itemCount)
+                    }
+                )
+
                 addEditTextLayout.addEditText.setOnFocusChangeListener { view, hasFocus ->
-                    SupportActionModeForEditText.onFocusChangeListener(appCompatActivity, view, hasFocus,
-                        SupportActionModeForEditText(
-                            R.string.create_card,
-                            R.string.create,
-                            addEditTextLayout.addEditText,
-                            fun(data: String){ cardInfo.name = data },
-                            fun (): String = cardInfo.name,
-                            fun () {
-                                listInfo.cards.add(cardInfo)
-                                dataInterface.saveCard(boardInfo.id, listInfo.id, cardInfo)
-                                cardAdapter.notifyItemInserted(cardAdapter.itemCount)
-                            }
-                        )
+                    SupportActionModeForEditText.onFocusChangeListener(
+                        appCompatActivity, view, hasFocus,
+                        supportActionModeForEditText
                     )
                     if(!hasFocus) {
                         isAddCardEditText = false
                         activityBoardItemListBinding.bottomFragment.removeAllViews()
                         notifyItemChanged(position)
                     }
+                }
+                addEditTextLayout.addEditText.setOnKeyListener { _, keyCode, keyEvent ->
+                    supportActionModeForEditText.onKeyListener(keyCode, keyEvent)
                 }
                 addEditTextLayout.addEditText.requestFocus()
                 SupportActionModeForEditText.softKeyBoard(

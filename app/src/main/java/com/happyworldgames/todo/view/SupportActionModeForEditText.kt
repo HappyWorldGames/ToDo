@@ -1,6 +1,7 @@
 package com.happyworldgames.todo.view
 
 import android.content.Context
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -33,11 +34,6 @@ class SupportActionModeForEditText(
             (view as EditText).isCursorVisible = hasFocus
             if(!hasFocus) actionMode?.finish()                     // close action mode if has`t focus
         }
-
-        fun onKeyListener(runSave: () -> Unit) {
-            TODO("Обработка enter кнопки, done")
-            runSave()
-        }
         /*
             Show or close soft keyboard
          */
@@ -68,10 +64,7 @@ class SupportActionModeForEditText(
         if(item == null) return false
         return when(item.itemId){
             saveID -> {         // if clicked done button
-                setData(editText.text.toString())
-                runSave()
-                destroy()
-                mode?.finish()  // close action mode
+                doneDo()
                 true
             }
             else -> false
@@ -83,9 +76,24 @@ class SupportActionModeForEditText(
         destroy()
     }
 
+    private fun doneDo() {
+        setData(editText.text.toString())
+        runSave()
+        actionMode?.finish()  // close action mode
+    }
+
     private fun destroy() {
         actionMode = null                         // unlock action mode
         editText.clearFocus()
         softKeyBoard(editText, false)       // hide soft keyboard
     }
+
+    fun onKeyListener(keyCode: Int, event: KeyEvent): Boolean {
+        if ((event.action == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+            doneDo()
+            return true
+        }
+        return false
+    }
+
 }

@@ -22,38 +22,48 @@ class CardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(activityCardBinding.root)
 
+        val supportActionModeForEditTextTitle = SupportActionModeForEditText(
+            R.string.edit_title_name,
+            R.string.save,
+            activityCardBinding.titleName,
+            fun(data: String){ cardInfo.name = data },
+            fun (): String = cardInfo.name,
+            fun () {
+                DataInterface.getDataInterface(this)
+                    .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
+            }
+        )
         activityCardBinding.titleName.setText(cardInfo.name)
         activityCardBinding.titleName.setOnFocusChangeListener { view, hasFocus ->
-             SupportActionModeForEditText.onFocusChangeListener(this, view, hasFocus,
-                 SupportActionModeForEditText(
-                     R.string.edit_title_name,
-                     R.string.save,
-                     activityCardBinding.titleName,
-                     fun(data: String){ cardInfo.name = data },
-                     fun (): String = cardInfo.name,
-                     fun () {
-                         DataInterface.getDataInterface(this)
-                             .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
-                     }
-                 )
+             SupportActionModeForEditText.onFocusChangeListener(
+                 this as AppCompatActivity, view, hasFocus,
+                supportActionModeForEditTextTitle
              )
         }
+        activityCardBinding.titleName.setOnKeyListener { _, keyCode, keyEvent ->
+            supportActionModeForEditTextTitle.onKeyListener(keyCode, keyEvent)
+        }
 
+        val supportActionModeForEditTextDescription = SupportActionModeForEditText(
+            R.string.edit_description,
+            R.string.save,
+            activityCardBinding.description,
+            fun(data: String){ cardInfo.description = data },
+            fun (): String = cardInfo.description,
+            fun () {
+                DataInterface.getDataInterface(this)
+                    .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
+            }
+        )
         activityCardBinding.description.setText(cardInfo.description)
         activityCardBinding.description.setOnFocusChangeListener { view, hasFocus ->
-            SupportActionModeForEditText.onFocusChangeListener(this, view, hasFocus,
-                SupportActionModeForEditText(
-                    R.string.edit_description,
-                    R.string.save,
-                    activityCardBinding.description,
-                    fun(data: String){ cardInfo.description = data },
-                    fun (): String = cardInfo.description,
-                    fun () {
-                        DataInterface.getDataInterface(this)
-                            .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
-                    }
-                )
+            SupportActionModeForEditText.onFocusChangeListener(
+                this as AppCompatActivity, view, hasFocus,
+                supportActionModeForEditTextDescription
             )
+        }
+        activityCardBinding.description.setOnKeyListener { _, keyCode, keyEvent ->
+            supportActionModeForEditTextDescription.onKeyListener(keyCode, keyEvent)
         }
     }
 
