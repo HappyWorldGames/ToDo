@@ -23,6 +23,10 @@ class BoardActivity : AppCompatActivity() {
 
         activityBoardBinding.viewPager.adapter = adapter
         activityBoardBinding.viewPager.offscreenPageLimit = 3
+
+        /*
+            For view 3 pagers on screen
+         */
         val pageMarginPx = resources.getDimensionPixelOffset(R.dimen.pageMargin)
         val offsetPx = resources.getDimensionPixelOffset(R.dimen.offset)
         activityBoardBinding.viewPager.setPageTransformer { page, position ->
@@ -38,6 +42,8 @@ class BoardActivity : AppCompatActivity() {
                 page.translationY = offset
             }
         }
-
+        /*
+            End
+         */
     }
 }
