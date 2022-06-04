@@ -2,6 +2,7 @@ package com.happyworldgames.todo.view
 
 import android.content.Context
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.happyworldgames.todo.R
 import com.happyworldgames.todo.databinding.ActivityCardBinding
@@ -20,6 +21,10 @@ class CardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.apply {
+            title = ""
+            setDisplayHomeAsUpEnabled(true)
+        }
         setContentView(activityCardBinding.root)
 
         val supportActionModeForEditTextTitle = SupportActionModeForEditText(
@@ -67,4 +72,13 @@ class CardActivity : AppCompatActivity() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }

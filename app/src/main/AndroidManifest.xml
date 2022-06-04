@@ -20,7 +20,6 @@
         <activity android:name=".view.BoardActivity"
             android:exported="false"/>
         <activity android:name=".view.CardActivity"
-            android:label=""
             android:exported="false"/>
     </application>
 
