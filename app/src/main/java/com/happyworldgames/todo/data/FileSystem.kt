@@ -103,9 +103,10 @@ class FileSystem(context: Context) : DataInterface {
     }
 
     private fun delete(file: File) {
+        // if file is directory, scan directory
         if(file.isDirectory) file.listFiles()!!.forEach { f ->
-            delete(f)
+            delete(f) // call delete fun
         }
-        file.delete()
+        file.delete() // delete file/folder
     }
 }
