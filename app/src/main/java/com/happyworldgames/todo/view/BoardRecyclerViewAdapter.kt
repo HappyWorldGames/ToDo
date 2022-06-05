@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.happyworldgames.todo.R
 import com.happyworldgames.todo.databinding.*
 import com.happyworldgames.todo.model.BoardInfo
@@ -59,10 +60,10 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                     fun(data: String){ listInfo.name = data },
                     fun (): String = listInfo.name,
                     fun () {
+                        // TODO("Hint is blank")
+                        if(listInfo.name.isBlank()) return
                         boardInfo.lists.add(listInfo)
-                        DataInterface.getDataInterface(
-                            activityBoardItemAddEditTextViewHolder.root.context
-                        ).saveList(boardInfo, listInfo)
+                        dataInterface.saveList(boardInfo, listInfo)
                         notifyItemInserted(itemCount)
                     }
                 )
@@ -98,6 +99,8 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                 fun(data: String){ listInfo.name = data },
                 fun (): String = listInfo.name,
                 fun () {
+                    // TODO("Hint is blank")
+                    if(listInfo.name.isBlank()) return
                     dataInterface.saveList(boardInfo, listInfo)
                 }
             )
@@ -158,6 +161,8 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                     fun(data: String){ cardInfo.name = data },
                     fun (): String = cardInfo.name,
                     fun () {
+                        // TODO("Hint is blank")
+                        if(cardInfo.name.isBlank()) return
                         listInfo.cards.add(cardInfo)
                         dataInterface.saveCard(boardInfo.id, listInfo.id, cardInfo)
                         cardAdapter.notifyItemInserted(cardAdapter.itemCount)
@@ -196,5 +201,9 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
     }
     class ListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val mainView = ActivityBoardItemListBinding.bind(view)
+    }
+
+    private fun show(view: View, text: String) {
+        Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
     }
 }
