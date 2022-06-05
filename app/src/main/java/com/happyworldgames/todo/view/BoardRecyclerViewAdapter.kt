@@ -19,8 +19,8 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                                private val dataInterface: DataInterface,
                                private val boardInfo: BoardInfo
                                ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var isAddListEditText = false
-    private var isAddCardEditText = false
+    private var isAddListEditText = false   // flag for Add List
+    private var isAddCardEditText = false   // flag for Add Card
 
     override fun getItemViewType(position: Int): Int {
         return if(position != itemCount - 1) R.layout.activity_board_item_list
@@ -44,12 +44,12 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
             if(!isAddListEditText) {
                 val activityBoardItemAddBinding = (holder as AddViewHolder).mainView
                 activityBoardItemAddBinding.button.setOnClickListener {
-                    //alert.show()
                     isAddListEditText = true
                     notifyItemChanged(position)
                 }
             }else {
                 val activityBoardItemAddEditTextViewHolder = (holder as AddEditTextViewHolder).mainView
+                activityBoardItemAddEditTextViewHolder.root.translationX = 0f       // fix move edittext
 
                 val listInfo = ListInfo(UUID.randomUUID().toString(), position, "")
                 val supportActionModeForEditText = SupportActionModeForEditText(

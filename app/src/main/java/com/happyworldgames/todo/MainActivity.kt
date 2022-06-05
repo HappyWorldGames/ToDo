@@ -41,10 +41,12 @@ class MainActivity : AppCompatActivity() {
             setTitle(getString(R.string.create_board))
             setView(editTextName)
             setPositiveButton(getString(R.string.create)){ _, _ ->
-                // create board fun
+                if(editTextName.text.isNullOrBlank()) return@setPositiveButton
+                // create board
                 val boardInfo = BoardInfo(UUID.randomUUID().toString(), -1,
                     editTextName.text.toString())
                 DataInterface.getDataInterface(context).saveBoard(boardInfo)
+                // end create
                 adapter.notifyItemInserted(adapter.itemCount)
             }
             setNeutralButton(getString(R.string.cancel), null)

@@ -28,6 +28,7 @@ class FileSystem(context: Context) : DataInterface {
 
     override fun getBoard(id: String): BoardInfo {
         val infoFolder = File(dirPath, id)                              // init board folder
+        if(!infoFolder.exists()) return BoardInfo("", -1, "")
         var text = getDataFromFile(infoFolder)                          // get text from file
 
         val boardInfo = Json.decodeFromString<BoardInfo>(text)          // init BoardInfo
