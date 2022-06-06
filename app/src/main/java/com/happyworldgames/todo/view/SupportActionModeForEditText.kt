@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.core.widget.addTextChangedListener
 
 /*
     For easy use ActionMode on EditText
@@ -16,6 +17,7 @@ import androidx.appcompat.view.ActionMode
 class SupportActionModeForEditText(
     private val editTextId: Int,                    // resources id for getString(editTextId)
     private val doneTextId: Int,                    // resources id for getString(doneTextId)
+    private val blankTextId: Int,                   // resources id for getString(doneTextId), if == -1, no check
     private val editText: EditText,
     private val setData: (data: String) -> Unit,    // save text from edittext
     private val getData: () -> String,              // for set no edit data in edittext
@@ -49,6 +51,12 @@ class SupportActionModeForEditText(
     private val context = editText.context
     private val saveID = 2                          // id save button from menu
 
+    init {
+        if(blankTextId != -1) editText.addTextChangedListener {
+            if(editText.text.isNotBlank()) editText.error = null
+        }
+    }
+
     override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
         if(mode == null) return false
         menu?.add(0, saveID, 0, context.getString(doneTextId))  // add done button
@@ -77,6 +85,10 @@ class SupportActionModeForEditText(
     }
 
     private fun doneDo() {
+        if(blankTextId != -1 && editText.text.isBlank()) {
+            editText.error = context.getString(blankTextId)
+            return
+        }
         setData(editText.text.toString())
         runSave()
         actionMode?.finish()  // close action mode

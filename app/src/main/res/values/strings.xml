@@ -7,6 +7,8 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
 
+    <string name="blank_text">This field can not be blank</string>
+
     <!-- MainActivity -->
     <string name="board_name">Board Name</string>
     <string name="create_board">Create Board</string>
