@@ -2,13 +2,12 @@ package com.happyworldgames.todo
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.KeyEvent
+import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.happyworldgames.todo.databinding.ActivityMainBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.DataInterface
@@ -39,10 +38,11 @@ class MainActivity : AppCompatActivity() {
     private fun createAlert(): AlertDialog {
         val editTextName = EditText(this).apply {
             hint = getString(R.string.board_name)
-        }
-        editTextName.setOnKeyListener { _, _, _ ->
-            if(editTextName.text.isNotBlank()) editTextName.error = null
-            true
+            inputType = InputType.TYPE_TEXT_VARIATION_FILTER
+            setOnKeyListener { _, _, _ ->
+                if(text.isNotBlank()) error = null
+                true
+            }
         }
         val alertDialog = AlertDialog.Builder(this).apply {
             setTitle(getString(R.string.create_board))
