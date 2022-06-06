@@ -92,7 +92,7 @@ class SupportActionModeForEditText(
             editText.error = context.getString(blankTextId)
             return
         }
-        setData(editText.text.toString())
+        setData(editText.text.toString().trim())
         runSave()
         actionMode?.finish()  // close action mode
     }
