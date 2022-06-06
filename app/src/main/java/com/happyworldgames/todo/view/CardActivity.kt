@@ -30,6 +30,7 @@ class CardActivity : AppCompatActivity() {
         val supportActionModeForEditTextTitle = SupportActionModeForEditText(
             R.string.edit_title_name,
             R.string.save,
+            R.string.blank_text,
             activityCardBinding.titleName,
             fun(data: String){ cardInfo.name = data },
             fun (): String = cardInfo.name,
@@ -52,6 +53,7 @@ class CardActivity : AppCompatActivity() {
         val supportActionModeForEditTextDescription = SupportActionModeForEditText(
             R.string.edit_description,
             R.string.save,
+            SupportActionModeForEditText.NO_BLANK_CHECK,
             activityCardBinding.description,
             fun(data: String){ cardInfo.description = data },
             fun (): String = cardInfo.description,

@@ -17,13 +17,16 @@ import androidx.core.widget.addTextChangedListener
 class SupportActionModeForEditText(
     private val editTextId: Int,                    // resources id for getString(editTextId)
     private val doneTextId: Int,                    // resources id for getString(doneTextId)
-    private val blankTextId: Int,                   // resources id for getString(doneTextId), if == -1, no check
+    private val blankTextId: Int,                   /* resources id for getString(doneTextId),
+                                                        if == NO_BLANK_CHECK, no check */
     private val editText: EditText,
     private val setData: (data: String) -> Unit,    // save text from edittext
     private val getData: () -> String,              // for set no edit data in edittext
     private val runSave: () -> Unit                 // save edited data
 ) : ActionMode.Callback {
     companion object {
+        const val NO_BLANK_CHECK = -1
+
         private var actionMode: ActionMode? = null  // use for block create new and clone haven`t
 
         /*
