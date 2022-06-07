@@ -12,9 +12,13 @@ import com.happyworldgames.todo.databinding.ActivityMainBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.DataInterface
 import com.happyworldgames.todo.view.MainRecyclerViewAdapter
+import kotlinx.coroutines.*
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CoroutineScope {
+    override val coroutineContext: CoroutineContext get() = Dispatchers.Main + Job()
+
     private val activityMain by lazy { ActivityMainBinding.inflate(layoutInflater) } // activity view
     private val adapter by lazy { MainRecyclerViewAdapter(this) }   // adapter for recyclerview
 
@@ -22,11 +26,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(activityMain.root)
 
+        launch(Dispatchers.Main) {
+            onCreate()
+        }
+    }
+
+    private suspend fun onCreate() {
         activityMain.recyclerView.layoutManager = GridLayoutManager(this, 2,
             RecyclerView.VERTICAL, false)
         activityMain.recyclerView.adapter = adapter
 
-        val alert = createAlert()
+        val alert = withContext(Dispatchers.Main){
+            createAlert()
+        }
         activityMain.floatingActionButton.setOnClickListener {
             alert.show()
         }
@@ -71,5 +83,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return alertDialog
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineContext.cancel()
     }
 }

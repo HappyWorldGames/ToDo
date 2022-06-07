@@ -83,7 +83,7 @@ class SupportActionModeForEditText(
     }
 
     override fun onDestroyActionMode(mode: ActionMode?) {
-        editText.setText(getData())
+        if(editText.text.toString() != getData()) editText.setText(getData())
         destroy()
     }
 

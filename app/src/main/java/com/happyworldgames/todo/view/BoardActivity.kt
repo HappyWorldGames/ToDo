@@ -8,8 +8,12 @@ import com.happyworldgames.todo.R
 import com.happyworldgames.todo.databinding.ActivityBoardBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.DataInterface
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class BoardActivity : AppCompatActivity() {
+class BoardActivity : AppCompatActivity(), CoroutineScope {
+    override val coroutineContext: CoroutineContext get() = Dispatchers.Main + Job()
+
     private val activityBoardBinding by lazy { ActivityBoardBinding.inflate(layoutInflater) }
 
     private val dataInterface by lazy { DataInterface.getDataInterface(this) }
@@ -19,8 +23,20 @@ class BoardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activityBoardBinding.root)
-        title = boardInfo.name
 
+        launch(Dispatchers.Main) {
+            onCreate()
+        }
+    }
+
+    private suspend fun onCreate() {
+        title = withContext(Dispatchers.IO) {
+            boardInfo.name
+        }
+        initViewPager()
+    }
+
+    private fun initViewPager() {
         activityBoardBinding.viewPager.adapter = adapter
         activityBoardBinding.viewPager.offscreenPageLimit = 3
 
@@ -41,9 +57,17 @@ class BoardActivity : AppCompatActivity() {
             } else {
                 page.translationY = offset
             }
+            /* TODO("future zoom")
+            page.scaleX = 0.75f
+            page.scaleY = 0.75f*/
         }
         /*
             End
          */
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineContext.cancel()
     }
 }

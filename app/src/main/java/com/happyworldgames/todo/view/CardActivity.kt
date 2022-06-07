@@ -8,8 +8,16 @@ import com.happyworldgames.todo.R
 import com.happyworldgames.todo.databinding.ActivityCardBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.DataInterface
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlin.coroutines.CoroutineContext
 
-class CardActivity : AppCompatActivity() {
+class CardActivity : AppCompatActivity(), CoroutineScope {
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + Job()
+
     private val activityCardBinding by lazy { ActivityCardBinding.inflate(layoutInflater) }
 
     private val cardInfo by lazy { boardInfo.lists[posList].cards[posCard] }
@@ -21,6 +29,7 @@ class CardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         supportActionBar?.apply {
             title = ""
             setDisplayHomeAsUpEnabled(true)
@@ -82,5 +91,10 @@ class CardActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineContext.cancel()
     }
 }

@@ -140,7 +140,8 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                 addCardLayout.addCard.setOnClickListener {
                     isAddCardEditText = true
                     activityBoardItemListBinding.bottomFragment.removeAllViews()
-                    notifyItemChanged(position)
+                    //TODO notifyItemChanged(position)
+                    onBindViewHolder(holder, position)
                 }
             }else {
                 val addEditTextLayout = ActivityBoardItemListAddEditTextBinding
@@ -173,7 +174,8 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                     if(!hasFocus) {
                         isAddCardEditText = false
                         activityBoardItemListBinding.bottomFragment.removeAllViews()
-                        notifyItemChanged(position)
+                        //TODO notifyItemChanged(position)
+                        onBindViewHolder(holder, position)
                     }
                 }
                 addEditTextLayout.addEditText.setOnKeyListener { _, keyCode, keyEvent ->
