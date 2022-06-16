@@ -3,6 +3,7 @@ package com.happyworldgames.todo.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -90,6 +91,19 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
             val listInfo = boardInfo.lists[position]
             val activityBoardItemListBinding = (holder as ListViewHolder).mainView
 
+            activityBoardItemListBinding.materialToolbar.menu.add(0, 1, 0, context.getString(R.string.delete))
+            activityBoardItemListBinding.materialToolbar.setOnMenuItemClickListener { menuItem ->
+                when(menuItem.itemId){
+                    1 -> {
+                        val listInfoDel = boardInfo.lists.removeAt(position)
+                        notifyItemRemoved(position)
+                        dataInterface.deleteList(boardInfo.id, listInfoDel.id)
+                        true
+                    }
+                    else -> false
+                }
+            }
+
             val supportActionModeForEditTextZero = SupportActionModeForEditText(
                 R.string.edit_list_name,
                 R.string.save,
@@ -111,23 +125,6 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
             }
             activityBoardItemListBinding.listName.setOnKeyListener { _, keyCode, keyEvent ->
                 supportActionModeForEditTextZero.onKeyListener(keyCode, keyEvent)
-            }
-
-            activityBoardItemListBinding.more.setOnClickListener {
-                val popupMenu = PopupMenu(context, activityBoardItemListBinding.more)
-                popupMenu.menu.add(0, 1, 0, context.getString(R.string.delete))
-                popupMenu.setOnMenuItemClickListener {
-                    when(it.itemId){
-                        1 -> {
-                            val listInfoDel = boardInfo.lists.removeAt(position)
-                            notifyItemRemoved(position)
-                            dataInterface.deleteList(boardInfo.id, listInfoDel.id)
-                            true
-                        }
-                        else -> false
-                    }
-                }
-                popupMenu.show()
             }
 
             val cardAdapter = CardRecyclerViewAdapter(dataInterface, boardInfo, position)
