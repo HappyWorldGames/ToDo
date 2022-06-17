@@ -65,7 +65,7 @@ class BoardActivity : AppCompatActivity(), CoroutineScope {
 
     override fun onStart() {
         super.onStart()
-        activityBoardBinding.viewPager.adapter?.notifyItemChanged(activityBoardBinding.viewPager.currentItem)
+        activityBoardBinding.viewPager.adapter?.notifyItemChanged(activityBoardBinding.viewPager.currentItem)  // for update
     }
 
     override fun onDestroy() {
