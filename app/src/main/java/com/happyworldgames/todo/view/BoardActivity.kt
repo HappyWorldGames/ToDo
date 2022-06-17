@@ -57,9 +57,6 @@ class BoardActivity : AppCompatActivity(), CoroutineScope {
             } else {
                 page.translationY = offset
             }
-            /* TODO("future zoom")
-            page.scaleX = 0.75f
-            page.scaleY = 0.75f*/
         }
         /*
             End
