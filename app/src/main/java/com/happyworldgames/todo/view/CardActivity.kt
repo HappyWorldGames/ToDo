@@ -2,6 +2,7 @@ package com.happyworldgames.todo.view
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.happyworldgames.todo.R
@@ -83,14 +84,25 @@ class CardActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu?.apply {
+            add(0, R.string.delete, 0, getString(R.string.delete))
+        }
+        return true
+    }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
+            R.string.delete -> {
+                DataInterface.getDataInterface(this).deleteCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo.id)
+                finish()
+                true
+            }
+            else -> false
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {

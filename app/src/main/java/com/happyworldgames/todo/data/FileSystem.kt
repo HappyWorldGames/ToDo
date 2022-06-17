@@ -8,7 +8,7 @@ import kotlinx.serialization.json.Json
 import java.io.File
 import java.nio.charset.Charset
 
-class FileSystem(context: Context) : DataInterface {
+class FileSystem(val context: Context) : DataInterface {
     private val charset = "UTF-8"                                   // standard charset
     private val dirPath = context.getExternalFilesDir("")           // main folder path
     private val infoFileName = "info.xml"                           // name info file
@@ -86,6 +86,25 @@ class FileSystem(context: Context) : DataInterface {
         delete(folder)                                           // delete list
     }
     override fun deleteCard(idBoard: String, idList: String, idCard: String) {
+        /*
+        * Start Code for update global BoardInfo
+        * */
+        var posList = -1
+        BoardInfo.getBoardInfo(context, idBoard).lists.forEachIndexed { index, listInfo ->
+            if (listInfo.id == idList) {
+                posList = index
+                return@forEachIndexed
+            }
+        }
+        BoardInfo.getBoardInfo(context, idBoard).lists[posList].cards.forEach { cardInfo ->
+            if (cardInfo.id == idCard) {
+                BoardInfo.getBoardInfo(context, idBoard).lists[posList].cards.remove(cardInfo)
+                return@forEach
+            }
+        }
+        /*
+        * End
+        * */
         val folder = File(dirPath, "$idBoard/$idList/$idCard")      // init folder card
         delete(folder)                                                   // delete card
     }
