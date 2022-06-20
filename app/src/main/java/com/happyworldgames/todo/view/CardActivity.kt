@@ -7,6 +7,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.happyworldgames.todo.R
+import com.happyworldgames.todo.adapter.CardItemsAdapter
 import com.happyworldgames.todo.databinding.ActivityCardBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.DataInterface

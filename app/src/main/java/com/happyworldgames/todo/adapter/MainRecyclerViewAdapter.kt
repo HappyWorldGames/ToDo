@@ -1,4 +1,4 @@
-package com.happyworldgames.todo.view
+package com.happyworldgames.todo.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.happyworldgames.todo.R
 import com.happyworldgames.todo.databinding.ActivityMainItemBinding
 import com.happyworldgames.todo.model.DataInterface
+import com.happyworldgames.todo.view.BoardActivity
 
 class MainRecyclerViewAdapter(private val context: Context) :
     RecyclerView.Adapter<MainRecyclerViewAdapter.MainViewHolder>() {

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/tag_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/tag_name"
+        android:inputType="textFilter"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:autofillHints="" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/color_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/tag_name"
+        app:layout_constraintStart_toStartOf="@+id/tag_name"
+        app:layout_constraintTop_toBottomOf="@+id/tag_name">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/green_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/layout_bg"
+            android:backgroundTint="@color/green"
+            app:layout_constraintBottom_toTopOf="@+id/purple_button"
+            app:layout_constraintEnd_toStartOf="@+id/yellow_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/yellow_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/layout_bg"
+            android:backgroundTint="@color/yellow"
+            app:layout_constraintBottom_toBottomOf="@+id/green_button"
+            app:layout_constraintEnd_toStartOf="@+id/orange_button"
+            app:layout_constraintStart_toEndOf="@+id/green_button"
+            app:layout_constraintTop_toTopOf="@id/green_button"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/orange_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/layout_bg"
+            android:backgroundTint="@color/orange"
+            app:layout_constraintBottom_toBottomOf="@+id/green_button"
+            app:layout_constraintEnd_toStartOf="@+id/red_button"
+            app:layout_constraintStart_toEndOf="@+id/yellow_button"
+            app:layout_constraintTop_toTopOf="@id/green_button"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/red_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/layout_bg"
+            android:backgroundTint="@color/red"
+            app:layout_constraintBottom_toBottomOf="@+id/green_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/orange_button"
+            app:layout_constraintTop_toTopOf="@id/green_button"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/purple_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/layout_bg"
+            android:backgroundTint="@color/purple"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/dark_blue_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/green_button"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dark_blue_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/layout_bg"
+            android:backgroundTint="@color/dark_blue"
+            app:layout_constraintBottom_toBottomOf="@+id/purple_button"
+            app:layout_constraintEnd_toStartOf="@+id/blue_button"
+            app:layout_constraintStart_toEndOf="@+id/purple_button"
+            app:layout_constraintTop_toTopOf="@+id/purple_button"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/blue_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/layout_bg"
+            android:backgroundTint="@color/blue"
+            app:layout_constraintBottom_toBottomOf="@+id/purple_button"
+            app:layout_constraintEnd_toStartOf="@+id/pink_button"
+            app:layout_constraintStart_toEndOf="@+id/dark_blue_button"
+            app:layout_constraintTop_toTopOf="@+id/purple_button"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/pink_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/layout_bg"
+            android:backgroundTint="@color/pink"
+            app:layout_constraintBottom_toBottomOf="@+id/purple_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/blue_button"
+            app:layout_constraintTop_toTopOf="@+id/purple_button"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/delete_tag_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/delete"
+        android:textColor="#D50000"
+        app:layout_constraintStart_toStartOf="@+id/tag_name"
+        app:layout_constraintTop_toBottomOf="@+id/color_list" />
+
+    <Button
+        android:id="@+id/done_tag_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/done"
+        android:textColor="#304FFE"
+        app:layout_constraintEnd_toEndOf="@+id/tag_name"
+        app:layout_constraintTop_toTopOf="@+id/delete_tag_button" />
+
+    <Button
+        android:id="@+id/cancel_tag_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/cancel"
+        android:textColor="#304FFE"
+        app:layout_constraintEnd_toStartOf="@+id/done_tag_button"
+        app:layout_constraintTop_toTopOf="@+id/delete_tag_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

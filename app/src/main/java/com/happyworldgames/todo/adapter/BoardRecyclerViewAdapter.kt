@@ -1,4 +1,4 @@
-package com.happyworldgames.todo.view
+package com.happyworldgames.todo.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +12,7 @@ import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.CardInfo
 import com.happyworldgames.todo.model.DataInterface
 import com.happyworldgames.todo.model.ListInfo
+import com.happyworldgames.todo.view.SupportActionModeForEditText
 import java.util.*
 
 class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
@@ -144,8 +145,7 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                 activityBoardItemListBinding.bottomFragment.addView(addEditTextLayout.root)
 
                 val cardInfo = CardInfo(
-                    UUID.randomUUID().toString(), cardAdapter.itemCount,
-                    "", ""
+                    position = cardAdapter.itemCount
                 )
                 val supportActionModeForEditText = SupportActionModeForEditText(
                     R.string.create_card,

@@ -1,4 +1,4 @@
-package com.happyworldgames.todo.view
+package com.happyworldgames.todo.adapter
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import com.happyworldgames.todo.R
 import com.happyworldgames.todo.databinding.ActivityBoardItemCardBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.DataInterface
+import com.happyworldgames.todo.view.CardActivity
 
 class CardRecyclerViewAdapter(private val dataInterface: DataInterface, private val boardInfo: BoardInfo,
                               private val posList: Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

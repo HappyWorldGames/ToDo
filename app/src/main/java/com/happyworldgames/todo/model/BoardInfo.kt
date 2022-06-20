@@ -9,7 +9,8 @@ data class BoardInfo(
     override var id: String,
     override var position: Int,
     override var name: String,
-    @Transient val lists: ArrayList<ListInfo> = arrayListOf()                   //list lists
+    @Transient val lists: ArrayList<ListInfo> = arrayListOf(),                  // list lists
+    val tagList: ArrayList<TagItem> = arrayListOf()                             // tag list
 ): InfoInterface {
     companion object {
         private var boardInfo: BoardInfo? = null                                // global boardInfo

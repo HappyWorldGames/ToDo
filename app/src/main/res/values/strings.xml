@@ -5,6 +5,7 @@
     <string name="create">Create</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
     <string name="save">Save</string>
 
     <string name="blank_text">This field can not be blank</string>
@@ -23,4 +24,9 @@
     <string name="description">Description</string>
     <string name="edit_title_name">Edit Title</string>
     <string name="edit_description">Edit Description</string>
+    <string name="tags">Tags…</string>
+    <string name="create_tag">Create Tag</string>
+    <string name="tag_name">Tag Name</string>
+    <string name="edit">Edit</string>
+
 </resources>

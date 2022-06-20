@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.happyworldgames.todo.R
+import com.happyworldgames.todo.adapter.BoardRecyclerViewAdapter
 import com.happyworldgames.todo.databinding.ActivityBoardBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.DataInterface

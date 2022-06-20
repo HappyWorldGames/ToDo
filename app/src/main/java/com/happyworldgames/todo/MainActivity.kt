@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.happyworldgames.todo.databinding.ActivityMainBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.DataInterface
-import com.happyworldgames.todo.view.MainRecyclerViewAdapter
+import com.happyworldgames.todo.adapter.MainRecyclerViewAdapter
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.coroutines.CoroutineContext
