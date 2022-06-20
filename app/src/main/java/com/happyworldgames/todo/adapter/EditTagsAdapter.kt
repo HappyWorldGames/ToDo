@@ -13,13 +13,17 @@ import com.happyworldgames.todo.databinding.ActivityCardHolderTagsEditItemBindin
 import com.happyworldgames.todo.databinding.ActivityCardHolderTagsEditItemBottomSheetDialogBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.CardInfo
-import com.happyworldgames.todo.model.DataInterface
 import com.happyworldgames.todo.model.TagItem
 
-class EditTagsAdapter(private val boardInfo: BoardInfo, private val posList: Int, private val cardInfo: CardInfo) : RecyclerView.Adapter<EditTagsAdapter.MainViewHolder>() {
-
-    var notifyItemChanged: (() -> Unit)? = null
-    var notifyItemRemoved: (() -> Unit)? = null
+/*
+* Adapter for edit tag: change name/color, delete
+* */
+class EditTagsAdapter(
+    private val boardInfo: BoardInfo, private val cardInfo: CardInfo,
+    private val saveCard: () -> Unit,       // for save card
+    private val notifyItemChanged: () -> Unit,      // for call from out adapter, notifyItemChanged
+    private val notifyItemRemoved: () -> Unit       // for call from out adapter, notifyItemRemoved
+) : RecyclerView.Adapter<EditTagsAdapter.MainViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_card_holder_tags_edit_item, parent, false)
@@ -30,66 +34,71 @@ class EditTagsAdapter(private val boardInfo: BoardInfo, private val posList: Int
         holder.main.tagButton.apply {
             val tag = boardInfo.tagList[position]
             var haveTag = false
-            cardInfo.tagList.forEach { tagItem ->
+            cardInfo.tagList.forEach { tagItem ->           // check have tag
                 if (tag == tagItem) {
                     haveTag = true
                     return@forEach
                 }
             }
 
-            text = if (haveTag) tag.name + " *" else tag.name
+            text = if (haveTag) tag.name + " *" else tag.name       // if have tag select
             setBackgroundColor(tag.color)
-            setOnClickListener {
+            setOnClickListener {                                    // select and unselect tag
                 if(haveTag) cardInfo.tagList.remove(tag)
                 else cardInfo.tagList.add(tag)
                 notifyItemChanged(position)
             }
         }
         holder.main.tagEdit.setOnClickListener {
-            showBottomSheetDialog(holder.main.root.context, boardInfo, position)
+            showBottomSheetDialog(holder.main.root.context, boardInfo, position)        // show bottom dialog
         }
     }
 
     override fun getItemCount(): Int = boardInfo.tagList.size
 
-    fun addTag(context: Context) {
+    fun addTag() {
         boardInfo.tagList.add(TagItem())
-        DataInterface.getDataInterface(context)
-            .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
+        saveCard()
         notifyItemInserted(itemCount - 1)
     }
 
+    /*
+    * show bottom dialog, change name/color and delete
+    * */
     private fun showBottomSheetDialog(context: Context, boardInfo: BoardInfo, position: Int) {
         val activityCardHolderTagsEditItemBottomSheetDialogBinding = ActivityCardHolderTagsEditItemBottomSheetDialogBinding.inflate(LayoutInflater.from(context))
-        BottomSheetDialog(context).apply {
-            activityCardHolderTagsEditItemBottomSheetDialogBinding.apply {
+
+        BottomSheetDialog(context).also { bottomDialog ->           // init bottom dialog
+
+            activityCardHolderTagsEditItemBottomSheetDialogBinding.apply {      // init bottom dialog view
                 val colors = arrayListOf<Int>()
                 arrayOf(R.color.green, R.color.yellow, R.color.orange, R.color.red, R.color.purple, R.color.dark_blue, R.color.blue, R.color.pink).forEach { colorId ->
                     colors.add(ContextCompat.getColor(context, colorId))
                 }
 
-                var colorPosition = 0
-                colors.forEachIndexed { colorPos, color ->
+                var colorPosition = 0                                       // var for color position
+                colors.forEachIndexed { colorPos, color ->                  // find current color position
                     if (color == boardInfo.tagList[position].color) {
                         colorPosition = colorPos
                         return@forEachIndexed
                     }
                 }
 
-                val colorButtons = arrayOf(
+                val colorButtons = arrayOf(                         // for easy access
                     greenButton, yellowButton, orangeButton, redButton, purpleButton, darkBlueButton, blueButton, pinkButton
                 )
-                val colorButtonIds = arrayOf(
+                val colorButtonIds = arrayOf(                       // for easy find clicked button
                     R.id.green_button, R.id.yellow_button, R.id.orange_button, R.id.red_button,
                     R.id.purple_button, R.id.dark_blue_button, R.id.blue_button, R.id.pink_button
                 )
 
-                colorButtons[colorPosition].text = "*"
-                val colorButtonClickListener = View.OnClickListener { view ->
-                    colorButtons[colorPosition].text = ""
+                tagName.setText(boardInfo.tagList[position].name)                   // set tag name on edittext
+                colorButtons[colorPosition].text = "*"                              // check start color position button
+                val colorButtonClickListener = View.OnClickListener { view ->       // click listener for color buttons
+                    colorButtons[colorPosition].text = ""                           // uncheck prev color position button
                     (view as AppCompatButton).apply {
-                        text = "*"
-                        colorButtonIds.forEachIndexed { posButton, idButton ->
+                        text = "*"                                                  // check now color position button
+                        colorButtonIds.forEachIndexed { posButton, idButton ->      // find now color position button
                             if (id == idButton) {
                                 colorPosition = posButton
                                 return@forEachIndexed
@@ -98,34 +107,32 @@ class EditTagsAdapter(private val boardInfo: BoardInfo, private val posList: Int
                     }
                 }
 
-                tagName.setText(boardInfo.tagList[position].name)
-                colorButtons.forEach { button ->
+                colorButtons.forEach { button ->                                    // set color button click listener for all color button
                     button.setOnClickListener(colorButtonClickListener)
                 }
 
                 // fun buttons
-                deleteTagButton.setOnClickListener {
+                deleteTagButton.setOnClickListener {            // delete tag button
                     boardInfo.tagList.removeAt(position)
-                    DataInterface.getDataInterface(context)
-                        .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
-                    notifyItemRemoved?.invoke()
-                    dismiss()
+                    saveCard()
+                    notifyItemRemoved()
+                    bottomDialog.dismiss()
                 }
-                cancelTagButton.setOnClickListener {
-                    dismiss()
+                cancelTagButton.setOnClickListener {            // cancel tag button
+                    bottomDialog.dismiss()
                 }
-                doneTagButton.setOnClickListener {
+                doneTagButton.setOnClickListener {              // done tag button
                     boardInfo.tagList[position].apply {
                         color = colors[colorPosition]
-                        name = activityCardHolderTagsEditItemBottomSheetDialogBinding.tagName.text.trim().toString()
+                        name = tagName.text.trim().toString()
                     }
-                    notifyItemChanged?.invoke()
-                    DataInterface.getDataInterface(context)
-                        .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
-                    dismiss()
+                    notifyItemChanged()
+                    saveCard()
+                    bottomDialog.dismiss()
                 }
             }
-            setContentView(activityCardHolderTagsEditItemBottomSheetDialogBinding.root)
+            // set view on bottom dialog
+            bottomDialog.setContentView(activityCardHolderTagsEditItemBottomSheetDialogBinding.root)
         }.show()
     }
 

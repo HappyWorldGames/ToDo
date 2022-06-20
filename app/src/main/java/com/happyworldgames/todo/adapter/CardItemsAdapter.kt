@@ -121,19 +121,19 @@ class CardItemsAdapter(
                     }
                 } else {
                     val holder = mHolder as TagsEditViewHolder
-                    val editTagsAdapter = EditTagsAdapter(boardInfo, posList, cardInfo)
-                    editTagsAdapter.notifyItemChanged = fun() {
-                        notifyItemChanged(position)
-                    }
-                    editTagsAdapter.notifyItemRemoved = fun() {
-                        notifyItemRemoved(position)
-                    }
+                    val editTagsAdapter = EditTagsAdapter(
+                        boardInfo, cardInfo,
+                        { DataInterface.getDataInterface(context)
+                            .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo) },       // save card
+                        { notifyItemChanged(position) },                                            // update item in view
+                        { notifyItemRemoved(position) }                                             // remove item in view
+                    )
                     holder.main.recyclerView.apply {
                         layoutManager = LinearLayoutManager(context)
                         adapter = editTagsAdapter
                     }
                     holder.main.createTag.setOnClickListener {
-                        editTagsAdapter.addTag(context)
+                        editTagsAdapter.addTag()
                     }
                 }
             }
