@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.happyworldgames.todo.R
@@ -16,13 +17,12 @@ import com.happyworldgames.todo.model.CardInfo
 import com.happyworldgames.todo.model.TagItem
 
 /*
-* Adapter for edit tag: change name/color, delete
+* Adapter for edit tag: add, change name/color, delete
 * */
 class EditTagsAdapter(
-    private val boardInfo: BoardInfo, private val cardInfo: CardInfo,
-    private val saveCard: () -> Unit,       // for save card
-    private val notifyItemChanged: () -> Unit,      // for call from out adapter, notifyItemChanged
-    private val notifyItemRemoved: () -> Unit       // for call from out adapter, notifyItemRemoved
+    private val boardInfo: BoardInfo,
+    private val cardInfo: CardInfo,
+    private val saveData: (isBoard: Boolean) -> Unit                  // for save board
 ) : RecyclerView.Adapter<EditTagsAdapter.MainViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
@@ -47,37 +47,40 @@ class EditTagsAdapter(
                 if(haveTag) cardInfo.tagList.remove(tag)
                 else cardInfo.tagList.add(tag)
                 notifyItemChanged(position)
+                saveData(false)
+
             }
         }
         holder.main.tagEdit.setOnClickListener {
-            showBottomSheetDialog(holder.main.root.context, boardInfo, position)        // show bottom dialog
+            showBottomSheetDialog(holder.main.root.context, position)        // show bottom dialog
         }
     }
 
     override fun getItemCount(): Int = boardInfo.tagList.size
 
-    fun addTag() {
-        boardInfo.tagList.add(TagItem())
-        saveCard()
-        notifyItemInserted(itemCount - 1)
+    fun addTag(context: Context) {
+        showBottomSheetDialog(context, -1)
     }
 
     /*
     * show bottom dialog, change name/color and delete
     * */
-    private fun showBottomSheetDialog(context: Context, boardInfo: BoardInfo, position: Int) {
+    private fun showBottomSheetDialog(context: Context, position: Int) {
+        val isCreate = position == -1
         val activityCardHolderTagsEditItemBottomSheetDialogBinding = ActivityCardHolderTagsEditItemBottomSheetDialogBinding.inflate(LayoutInflater.from(context))
 
         BottomSheetDialog(context).also { bottomDialog ->           // init bottom dialog
 
             activityCardHolderTagsEditItemBottomSheetDialogBinding.apply {      // init bottom dialog view
+                if(isCreate) deleteTagButton.visibility = View.GONE
+
                 val colors = arrayListOf<Int>()
                 arrayOf(R.color.green, R.color.yellow, R.color.orange, R.color.red, R.color.purple, R.color.dark_blue, R.color.blue, R.color.pink).forEach { colorId ->
                     colors.add(ContextCompat.getColor(context, colorId))
                 }
 
                 var colorPosition = 0                                       // var for color position
-                colors.forEachIndexed { colorPos, color ->                  // find current color position
+                if(!isCreate) colors.forEachIndexed { colorPos, color ->                  // find current color position
                     if (color == boardInfo.tagList[position].color) {
                         colorPosition = colorPos
                         return@forEachIndexed
@@ -92,7 +95,30 @@ class EditTagsAdapter(
                     R.id.purple_button, R.id.dark_blue_button, R.id.blue_button, R.id.pink_button
                 )
 
-                tagName.setText(boardInfo.tagList[position].name)                   // set tag name on edittext
+                tagName.setText(if(!isCreate) boardInfo.tagList[position].name else "")                   // set tag name on edittext
+
+                val checkEquals = {
+                    val currentTagItem = TagItem(tagName.text.toString(), colors[colorPosition])
+
+                    var hasTag = false
+                    boardInfo.tagList.forEach { tagItem ->
+                        if (tagItem == currentTagItem){
+                            hasTag = true
+                            return@forEach
+                        }
+                    }
+                    if (hasTag) {
+                        doneTagButton.isEnabled = false
+                        tagName.error = context.getString(R.string.tag_has_already)
+                    } else {
+                        doneTagButton.isEnabled = true
+                        tagName.error = null
+                    }
+                }
+
+                tagName.doAfterTextChanged {
+                    checkEquals()
+                }
                 colorButtons[colorPosition].text = "*"                              // check start color position button
                 val colorButtonClickListener = View.OnClickListener { view ->       // click listener for color buttons
                     colorButtons[colorPosition].text = ""                           // uncheck prev color position button
@@ -101,6 +127,7 @@ class EditTagsAdapter(
                         colorButtonIds.forEachIndexed { posButton, idButton ->      // find now color position button
                             if (id == idButton) {
                                 colorPosition = posButton
+                                checkEquals()
                                 return@forEachIndexed
                             }
                         }
@@ -112,22 +139,25 @@ class EditTagsAdapter(
                 }
 
                 // fun buttons
-                deleteTagButton.setOnClickListener {            // delete tag button
+                if(!isCreate) deleteTagButton.setOnClickListener {            // delete tag button
                     boardInfo.tagList.removeAt(position)
-                    saveCard()
-                    notifyItemRemoved()
+                    saveData(true)
+                    notifyItemRemoved(position)
                     bottomDialog.dismiss()
                 }
                 cancelTagButton.setOnClickListener {            // cancel tag button
                     bottomDialog.dismiss()
                 }
                 doneTagButton.setOnClickListener {              // done tag button
-                    boardInfo.tagList[position].apply {
-                        color = colors[colorPosition]
-                        name = tagName.text.trim().toString()
+                    val tagItem = TagItem(tagName.text.trim().toString(), colors[colorPosition])
+                    if(isCreate) {
+                        boardInfo.tagList.add(tagItem)
+                        notifyItemInserted(itemCount)
+                    } else {
+                        boardInfo.tagList[position] = tagItem
+                        notifyItemChanged(position)
                     }
-                    notifyItemChanged()
-                    saveCard()
+                    saveData(true)
                     bottomDialog.dismiss()
                 }
             }

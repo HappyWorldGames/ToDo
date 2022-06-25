@@ -24,7 +24,7 @@ class CardItemsAdapter(
     private val posList: Int                                                // for save card info
     ) : RecyclerView.Adapter<CardItemsAdapter.MainViewHolder>() {
     val context = activity as Context                                       // make context from activity
-    var isEditTag = false
+    private var isEditTag = false                                                   // flag mode tag
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
@@ -47,97 +47,105 @@ class CardItemsAdapter(
 
     override fun onBindViewHolder(mHolder: MainViewHolder, position: Int) {
         when (position) {
+            0, 1 -> onBindEditText(mHolder, position)
+            2 -> onBindPos2(mHolder, position)
+        }
+    }
 
-            0 -> {
-                val holder = mHolder as EditTextViewHolder
-                holder.main.editText.apply {
-                    inputType = InputType.TYPE_TEXT_VARIATION_FILTER
-                    hint = context.getString(R.string.title_name)
-                    setText(cardInfo.name)
+    private fun onBindEditText(mHolder: MainViewHolder, position: Int) {
+        val holder = mHolder as EditTextViewHolder
+        holder.main.editText.apply {                                // init edit text
+            inputType = when (position) {                           // set input type
+                0 -> InputType.TYPE_TEXT_VARIATION_FILTER
+                1 -> InputType.TYPE_CLASS_TEXT or
+                        InputType.TYPE_TEXT_FLAG_MULTI_LINE or
+                        InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                else -> -1
+            }
+            hint = context.getString(                               // set hint
+                when (position) {
+                    0 -> R.string.title_name
+                    1 -> R.string.description
+                    else -> -1
+                }
+            )
+            setText(                                                // set text
+                when (position) {
+                    0 -> cardInfo.name
+                    1 -> cardInfo.description
+                    else -> ""
+                }
+            )
 
-                    val supportActionModeForEditTextTitle = SupportActionModeForEditText(
-                        R.string.edit_title_name,
-                        R.string.save,
-                        R.string.blank_text,
-                        this,
-                        fun(data: String){ cardInfo.name = data },
-                        fun (): String = cardInfo.name,
-                        fun () {
-                            DataInterface.getDataInterface(this@CardItemsAdapter.context)
-                                .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
-                        }
-                    )
-                    setOnFocusChangeListener { view, hasFocus ->
-                        SupportActionModeForEditText.onFocusChangeListener(
-                            this@CardItemsAdapter.activity, view, hasFocus,
-                            supportActionModeForEditTextTitle
-                        )
-                    }
-                    setOnKeyListener { _, keyCode, keyEvent ->
-                        supportActionModeForEditTextTitle.onKeyListener(keyCode, keyEvent)
-                    }
+            val editTextId = when (position) {                      // editTextId for supportActionModeForEditText
+                0 -> R.string.edit_title_name
+                1 -> R.string.edit_description
+                else -> -1
+            }
+            val doneTextId = when (position) {                      // doneTextId for supportActionModeForEditText
+                0, 1 -> R.string.save
+                else -> -1
+            }
+            val blankTextId = when (position) {                     // blankTextId for supportActionModeForEditText
+                0 -> R.string.blank_text
+                1 -> SupportActionModeForEditText.NO_BLANK_CHECK
+                else -> -1
+            }
+            val setData = fun(data: String) {                       // setData for supportActionModeForEditText
+                when (position) {
+                    0 -> cardInfo.name = data
+                    1 -> cardInfo.description = data
+                    else -> throw Exception("Not Set Data")
                 }
             }
-
-            1 -> {
-                val holder = mHolder as EditTextViewHolder
-                holder.main.editText.apply {
-                    inputType = InputType.TYPE_CLASS_TEXT or
-                            InputType.TYPE_TEXT_FLAG_MULTI_LINE or
-                            InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-                    hint = context.getString(R.string.description)
-                    setText(cardInfo.description)
-
-                    val supportActionModeForEditTextDescription = SupportActionModeForEditText(
-                        R.string.edit_description,
-                        R.string.save,
-                        SupportActionModeForEditText.NO_BLANK_CHECK,
-                        this,
-                        fun(data: String){ cardInfo.description = data },
-                        fun (): String = cardInfo.description,
-                        fun () {
-                            DataInterface.getDataInterface(this@CardItemsAdapter.context)
-                                .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
-                        }
-                    )
-                    setOnFocusChangeListener { view, hasFocus ->
-                        SupportActionModeForEditText.onFocusChangeListener(
-                            this@CardItemsAdapter.activity, view, hasFocus,
-                            supportActionModeForEditTextDescription
-                        )
-                    }
-                    setOnKeyListener { _, keyCode, keyEvent ->
-                        supportActionModeForEditTextDescription.onKeyListener(keyCode, keyEvent)
-                    }
+            val getData = fun(): String {                           // getData for supportActionModeForEditText
+                return when (position) {
+                    0 -> cardInfo.name
+                    1 -> cardInfo.description
+                    else -> throw Exception("Not Get Data")
                 }
             }
-
-            2 -> {
-                if (!isEditTag) {
-                    val holder = mHolder as TagsViewHolder
-                    holder.main.tagsTextView.setOnClickListener {
-                        isEditTag = true
-                        notifyItemChanged(position)
-                    }
-                } else {
-                    val holder = mHolder as TagsEditViewHolder
-                    val editTagsAdapter = EditTagsAdapter(
-                        boardInfo, cardInfo,
-                        { DataInterface.getDataInterface(context)
-                            .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo) },       // save card
-                        { notifyItemChanged(position) },                                            // update item in view
-                        { notifyItemRemoved(position) }                                             // remove item in view
-                    )
-                    holder.main.recyclerView.apply {
-                        layoutManager = LinearLayoutManager(context)
-                        adapter = editTagsAdapter
-                    }
-                    holder.main.createTag.setOnClickListener {
-                        editTagsAdapter.addTag()
-                    }
+            val supportActionModeForEditText = SupportActionModeForEditText(            // supportActionModeForEditText
+                editTextId, doneTextId, blankTextId, this, setData, getData,
+                fun () {
+                    DataInterface.getDataInterface(this@CardItemsAdapter.context)
+                        .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
                 }
+            )
+            setOnFocusChangeListener { view, hasFocus ->
+                SupportActionModeForEditText.onFocusChangeListener(
+                    this@CardItemsAdapter.activity, view, hasFocus,
+                    supportActionModeForEditText
+                )
+            }
+            setOnKeyListener { _, keyCode, keyEvent ->
+                supportActionModeForEditText.onKeyListener(keyCode, keyEvent)
+            }
+        }
+    }
+    private fun onBindPos2(mHolder: MainViewHolder, position: Int) {
+        if (!isEditTag) {
+            val holder = mHolder as TagsViewHolder
+            holder.main.tagsTextView.setOnClickListener {
+                isEditTag = true
+                notifyItemChanged(position)
+            }
+        } else {
+            val holder = mHolder as TagsEditViewHolder
+            val editTagsAdapter = EditTagsAdapter(boardInfo, cardInfo) { isBoard ->
+                val dataInterface = DataInterface.getDataInterface(context)
+
+                if(isBoard) dataInterface.saveBoard(boardInfo)
+                else dataInterface.saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
             }
 
+            holder.main.recyclerView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = editTagsAdapter
+            }
+            holder.main.createTag.setOnClickListener {
+                editTagsAdapter.addTag(context)
+            }
         }
     }
 

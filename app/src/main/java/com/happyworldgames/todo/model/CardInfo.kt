@@ -11,6 +11,7 @@ data class CardInfo(
     override var name: String = "Null",                                     // card name
     var description: String = "",                                           // card description
     val tagList: ArrayList<TagItem> = arrayListOf(),                        // tag list
+    var test: String = "",
     val checkList: ArrayList<CheckItem> = arrayListOf()                     // task check list
     ): InfoInterface
 
