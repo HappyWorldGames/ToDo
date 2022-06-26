@@ -90,7 +90,6 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
             val listInfo = boardInfo.lists[position]
             val activityBoardItemListBinding = (holder as ListViewHolder).mainView
 
-            activityBoardItemListBinding.materialToolbar.menu.add(0, 1, 0, context.getString(R.string.delete))
             activityBoardItemListBinding.materialToolbar.setOnMenuItemClickListener { menuItem ->
                 when(menuItem.itemId){
                     1 -> {
@@ -194,6 +193,10 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
     }
     class ListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val mainView = ActivityBoardItemListBinding.bind(view)
+
+        init {
+            mainView.materialToolbar.menu.add(0, 1, 0, view.context.getString(R.string.delete))
+        }
     }
 
 }
