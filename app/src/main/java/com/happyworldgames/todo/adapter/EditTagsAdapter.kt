@@ -25,6 +25,23 @@ class EditTagsAdapter(
     private val saveData: (isBoard: Boolean) -> Unit                  // for save board
 ) : RecyclerView.Adapter<EditTagsAdapter.MainViewHolder>() {
 
+    init {
+        val removeList = arrayListOf<TagItem>()         // for work, create remove list
+        cardInfo.tagList.forEach { cardTag ->
+            var haveTag = false
+            boardInfo.tagList.forEach BoardFor@{ boardTag ->
+                if (boardTag == cardTag) {
+                    haveTag = true
+                    return@BoardFor
+                }
+            }
+            if(!haveTag) removeList.add(cardTag)        // add to remove list
+        }
+        removeList.forEach { cardTag ->
+            cardInfo.tagList.remove(cardTag)            // use remove list for remove from cardInfo tagList
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_card_holder_tags_edit_item, parent, false)
         return MainViewHolder(view)
