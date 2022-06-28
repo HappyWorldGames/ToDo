@@ -7,6 +7,7 @@
     <string name="cancel">Cancel</string>
     <string name="done">Done</string>
     <string name="save">Save</string>
+    <string name="edit">Edit</string>
 
     <string name="blank_text">This field can not be blank</string>
 
@@ -27,7 +28,7 @@
     <string name="tags">Tags…</string>
     <string name="create_tag">Create Tag</string>
     <string name="tag_name">Tag Name</string>
-    <string name="edit">Edit</string>
     <string name="tag_has_already">Tag has already</string>
+    <string name="edit_tags">Edit Tags</string>
 
 </resources>

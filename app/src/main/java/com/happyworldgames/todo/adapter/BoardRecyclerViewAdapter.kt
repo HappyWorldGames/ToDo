@@ -1,5 +1,6 @@
 package com.happyworldgames.todo.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +13,17 @@ import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.CardInfo
 import com.happyworldgames.todo.model.DataInterface
 import com.happyworldgames.todo.model.ListInfo
-import com.happyworldgames.todo.view.SupportActionModeForEditText
+import com.happyworldgames.todo.actionmode.SupportActionModeForEditText
 import java.util.*
 
-class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
-                               private val dataInterface: DataInterface,
-                               private val boardInfo: BoardInfo
-                               ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class BoardRecyclerViewAdapter(
+    private val appCompatActivity: AppCompatActivity,
+    private val dataInterface: DataInterface,
+    private val boardInfo: BoardInfo
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val context = appCompatActivity as Context
+
     private var isAddListEditText = false   // flag for Add List
     private var isAddCardEditText = false   // flag for Add Card
 
@@ -53,9 +58,9 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
 
                 val listInfo = ListInfo(UUID.randomUUID().toString(), position, "")
                 val supportActionModeForEditText = SupportActionModeForEditText(
-                    R.string.create_list,
-                    R.string.create,
-                    R.string.blank_text,
+                    context.getString(R.string.create_list),
+                    context.getString(R.string.create),
+                    context.getString(R.string.blank_text),
                     activityBoardItemAddEditTextViewHolder.editText,
                     fun(data: String){ listInfo.name = data },
                     fun (): String = listInfo.name,
@@ -67,9 +72,8 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                 )
                 activityBoardItemAddEditTextViewHolder.editText.setOnFocusChangeListener { view, hasFocus ->
                     view.post {
-                        SupportActionModeForEditText.onFocusChangeListener(
-                            appCompatActivity, view, hasFocus,
-                            supportActionModeForEditText
+                        supportActionModeForEditText.onFocusChangeListener(
+                            appCompatActivity, view, hasFocus
                         )
                         if(!hasFocus) {
                             isAddListEditText = false
@@ -103,9 +107,9 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
             }
 
             val supportActionModeForEditTextZero = SupportActionModeForEditText(
-                R.string.edit_list_name,
-                R.string.save,
-                R.string.blank_text,
+                context.getString(R.string.edit_list_name),
+                context.getString(R.string.save),
+                context.getString(R.string.blank_text),
                 activityBoardItemListBinding.listName,
                 fun(data: String){ listInfo.name = data },
                 fun (): String = listInfo.name,
@@ -116,9 +120,8 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
             activityBoardItemListBinding.listName.setText(if(listInfo.name.length > 20)
                 listInfo.name.subSequence(0, 20) else listInfo.name)
             activityBoardItemListBinding.listName.setOnFocusChangeListener { view, hasFocus ->
-                SupportActionModeForEditText.onFocusChangeListener(
-                    appCompatActivity, view, hasFocus,
-                    supportActionModeForEditTextZero
+                supportActionModeForEditTextZero.onFocusChangeListener(
+                    appCompatActivity, view, hasFocus
                 )
             }
             activityBoardItemListBinding.listName.setOnKeyListener { _, keyCode, keyEvent ->
@@ -147,9 +150,9 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                     position = cardAdapter.itemCount
                 )
                 val supportActionModeForEditText = SupportActionModeForEditText(
-                    R.string.create_card,
-                    R.string.create,
-                    R.string.blank_text,
+                    context.getString(R.string.create_card),
+                    context.getString(R.string.create),
+                    context.getString(R.string.blank_text),
                     addEditTextLayout.addEditText,
                     fun(data: String){ cardInfo.name = data },
                     fun (): String = cardInfo.name,
@@ -161,9 +164,8 @@ class BoardRecyclerViewAdapter(private val appCompatActivity: AppCompatActivity,
                 )
 
                 addEditTextLayout.addEditText.setOnFocusChangeListener { view, hasFocus ->
-                    SupportActionModeForEditText.onFocusChangeListener(
-                        appCompatActivity, view, hasFocus,
-                        supportActionModeForEditText
+                    supportActionModeForEditText.onFocusChangeListener(
+                        appCompatActivity, view, hasFocus
                     )
                     if(!hasFocus) {
                         isAddCardEditText = false

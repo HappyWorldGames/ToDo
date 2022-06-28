@@ -2,6 +2,8 @@ package com.happyworldgames.todo.adapter
 
 import android.content.Context
 import android.text.InputType
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.happyworldgames.todo.R
+import com.happyworldgames.todo.actionmode.SupportActionMode
+import com.happyworldgames.todo.actionmode.SupportActionModeForEditText
 import com.happyworldgames.todo.databinding.ActivityCardHolderEditTextBinding
 import com.happyworldgames.todo.databinding.ActivityCardHolderTagsBinding
 import com.happyworldgames.todo.databinding.ActivityCardHolderTagsEditBinding
 import com.happyworldgames.todo.model.BoardInfo
 import com.happyworldgames.todo.model.CardInfo
 import com.happyworldgames.todo.model.DataInterface
-import com.happyworldgames.todo.view.SupportActionModeForEditText
 
 class CardItemsAdapter(
     private val activity: AppCompatActivity,                                // for start SupportActionBar
@@ -23,6 +26,7 @@ class CardItemsAdapter(
     private val boardInfo: BoardInfo,                                       // for save card info
     private val posList: Int                                                // for save card info
     ) : RecyclerView.Adapter<CardItemsAdapter.MainViewHolder>() {
+
     val context = activity as Context                                       // make context from activity
     private var isEditTag = false                                                   // flag mode tag
 
@@ -88,7 +92,6 @@ class CardItemsAdapter(
             }
             val blankTextId = when (position) {                     // blankTextId for supportActionModeForEditText
                 0 -> R.string.blank_text
-                1 -> SupportActionModeForEditText.NO_BLANK_CHECK
                 else -> -1
             }
             val setData = fun(data: String) {                       // setData for supportActionModeForEditText
@@ -106,16 +109,20 @@ class CardItemsAdapter(
                 }
             }
             val supportActionModeForEditText = SupportActionModeForEditText(            // supportActionModeForEditText
-                editTextId, doneTextId, blankTextId, this, setData, getData,
+                context.getString(editTextId),
+                context.getString(doneTextId),
+                if(blankTextId != -1) context.getString(blankTextId) else SupportActionModeForEditText.NO_BLANK_CHECK,
+                this,
+                setData,
+                getData,
                 fun () {
                     DataInterface.getDataInterface(this@CardItemsAdapter.context)
                         .saveCard(boardInfo.id, boardInfo.lists[posList].id, cardInfo)
                 }
             )
             setOnFocusChangeListener { view, hasFocus ->
-                SupportActionModeForEditText.onFocusChangeListener(
-                    this@CardItemsAdapter.activity, view, hasFocus,
-                    supportActionModeForEditText
+                supportActionModeForEditText.onFocusChangeListener(
+                    this@CardItemsAdapter.activity, view, hasFocus
                 )
             }
             setOnKeyListener { _, keyCode, keyEvent ->
@@ -126,12 +133,33 @@ class CardItemsAdapter(
     private fun onBindPos2(mHolder: MainViewHolder, position: Int) {
         if (!isEditTag) {
             val holder = mHolder as TagsViewHolder
-            holder.main.tagsTextView.setOnClickListener {
+            holder.main.root.setOnClickListener {
                 isEditTag = true
                 notifyItemChanged(position)
             }
+
+            val spannableStringBuilder = SpannableStringBuilder()
+            var spanPos = 0
+            cardInfo.tagList.forEach { tagItem ->
+                val tempSpanPos = spanPos + if (tagItem.name.isNotEmpty()) tagItem.name.length else 1
+
+                spannableStringBuilder.append(tagItem.name.ifEmpty { " " })
+                spannableStringBuilder.setSpan(tagItem.color, spanPos, tempSpanPos, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+
+                spanPos = tempSpanPos
+            }
+
+            holder.main.tagsTextView.text = spannableStringBuilder.ifEmpty { context.getString(R.string.tags) }
         } else {
             val holder = mHolder as TagsEditViewHolder
+
+            SupportActionMode(context.getString(R.string.edit_tags)).apply {
+                setOnDestroyActionMode {
+                    isEditTag = false
+                    notifyItemChanged(position)
+                }
+            }.startActionMode(activity)
+
             val editTagsAdapter = EditTagsAdapter(boardInfo, cardInfo) { isBoard ->
                 val dataInterface = DataInterface.getDataInterface(context)
 
