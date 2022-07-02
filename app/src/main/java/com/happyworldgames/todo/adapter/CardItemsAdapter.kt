@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +53,7 @@ class CardItemsAdapter(
     override fun onBindViewHolder(mHolder: MainViewHolder, position: Int) {
         when (position) {
             0, 1 -> onBindEditText(mHolder, position)
-            2 -> onBindPos2(mHolder, position)
+            2 -> onBindTagEdit(mHolder, position)
         }
     }
 
@@ -130,7 +131,7 @@ class CardItemsAdapter(
             }
         }
     }
-    private fun onBindPos2(mHolder: MainViewHolder, position: Int) {
+    private fun onBindTagEdit(mHolder: MainViewHolder, position: Int) {
         if (!isEditTag) {
             val holder = mHolder as TagsViewHolder
             holder.main.root.setOnClickListener {
@@ -141,12 +142,12 @@ class CardItemsAdapter(
             val spannableStringBuilder = SpannableStringBuilder()
             var spanPos = 0
             cardInfo.tagList.forEach { tagItem ->
-                val tempSpanPos = spanPos + if (tagItem.name.isNotEmpty()) tagItem.name.length else 1
+                val tempSpanPos = spanPos + if (tagItem.name.isNotEmpty()) tagItem.name.length else 4
 
-                spannableStringBuilder.append(tagItem.name.ifEmpty { " " })
-                spannableStringBuilder.setSpan(tagItem.color, spanPos, tempSpanPos, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+                spannableStringBuilder.append(tagItem.name.ifEmpty { "null" } + " ")
+                spannableStringBuilder.setSpan(ForegroundColorSpan(tagItem.color), spanPos, tempSpanPos, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
 
-                spanPos = tempSpanPos
+                spanPos = tempSpanPos + 1
             }
 
             holder.main.tagsTextView.text = spannableStringBuilder.ifEmpty { context.getString(R.string.tags) }

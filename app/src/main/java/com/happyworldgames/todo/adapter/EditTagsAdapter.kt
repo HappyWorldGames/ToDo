@@ -22,7 +22,7 @@ import com.happyworldgames.todo.model.TagItem
 class EditTagsAdapter(
     private val boardInfo: BoardInfo,
     private val cardInfo: CardInfo,
-    private val saveData: (isBoard: Boolean) -> Unit                  // for save board
+    private val saveData: (isBoard: Boolean) -> Unit                  // for save card/board
 ) : RecyclerView.Adapter<EditTagsAdapter.MainViewHolder>() {
 
     init {
@@ -40,6 +40,7 @@ class EditTagsAdapter(
         removeList.forEach { cardTag ->
             cardInfo.tagList.remove(cardTag)            // use remove list for remove from cardInfo tagList
         }
+        if(removeList.size > 0) saveData(false)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
