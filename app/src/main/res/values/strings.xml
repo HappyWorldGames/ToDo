@@ -10,6 +10,7 @@
     <string name="edit">Edit</string>
 
     <string name="blank_text">This field can not be blank</string>
+    <string name="exists_text">Title is already used.</string>
 
     <!-- MainActivity -->
     <string name="board_name">Board Name</string>

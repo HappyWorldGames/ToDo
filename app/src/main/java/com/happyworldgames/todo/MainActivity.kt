@@ -1,92 +1,70 @@
 package com.happyworldgames.todo
 
-import android.content.DialogInterface
+import android.content.Context
 import android.os.Bundle
-import android.text.InputType
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.happyworldgames.todo.core.Data
 import com.happyworldgames.todo.databinding.ActivityMainBinding
-import com.happyworldgames.todo.model.BoardInfo
-import com.happyworldgames.todo.model.DataInterface
-import com.happyworldgames.todo.adapter.MainRecyclerViewAdapter
-import kotlinx.coroutines.*
-import java.util.*
-import kotlin.coroutines.CoroutineContext
+import com.happyworldgames.todo.view.adapter.MainRecyclerViewAdapter
 
-class MainActivity : AppCompatActivity(), CoroutineScope {
-    override val coroutineContext: CoroutineContext get() = Dispatchers.Main + Job()
+class MainActivity : AppCompatActivity() {
 
-    private val activityMain by lazy { ActivityMainBinding.inflate(layoutInflater) } // activity view
-    private val adapter by lazy { MainRecyclerViewAdapter(this) }   // adapter for recyclerview
+    private val activityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    private val boardData by lazy { Data(this as Context) }
+    private val mainRecyclerViewAdapter by lazy { MainRecyclerViewAdapter(boardData) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(activityMain.root)
+        setContentView(activityMainBinding.root)
 
-        launch(Dispatchers.Main) {
-            onCreate()
-        }
-    }
+        activityMainBinding.mainRecyclerView.layoutManager = LinearLayoutManager(this as Context)
+        activityMainBinding.mainRecyclerView.adapter = mainRecyclerViewAdapter
 
-    private suspend fun onCreate() {
-        activityMain.recyclerView.layoutManager = GridLayoutManager(this, 2,
-            RecyclerView.VERTICAL, false)
-        activityMain.recyclerView.adapter = adapter
-
-        val alert = withContext(Dispatchers.Main){
-            createAlert()
-        }
-        activityMain.floatingActionButton.setOnClickListener {
-            alert.show()
-        }
-    }
-
-    /*
-        Alert for create board
-     */
-    private fun createAlert(): AlertDialog {
-        val editTextName = EditText(this).apply {
-            hint = getString(R.string.board_name)
-            inputType = InputType.TYPE_TEXT_VARIATION_FILTER
-            setOnKeyListener { _, _, _ ->
-                if(text.isNotBlank()) error = null
-                true
+        activityMainBinding.addFloatingActionButton.setOnClickListener {
+            val titleEditName = EditText(this as Context).apply {
+                hint = getString(R.string.board_name)
             }
-        }
-        val alertDialog = AlertDialog.Builder(this).apply {
-            setTitle(getString(R.string.create_board))
-            setView(editTextName)
-            setCancelable(false)
-            setPositiveButton(getString(R.string.create), null)
-            setNeutralButton(getString(R.string.cancel), null)
-            setOnDismissListener {
-                editTextName.error = null
-                editTextName.setText("")
-            }
-        }.create()
-        alertDialog.setOnShowListener {
-            alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-                if(editTextName.text.isNullOrBlank()){
-                    editTextName.error = "Null"
-                    return@setOnClickListener
+            val alertDialog = AlertDialog.Builder(this as Context).apply {
+                title = getString(R.string.create)
+                setView(titleEditName)
+                setPositiveButton(getString(R.string.create)){ _, _ -> }
+                setNegativeButton(getString(R.string.cancel)){ _, _ ->}
+            }.create()
+            alertDialog.show()
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener positiveButton@{
+                val titleText = titleEditName.text.toString()
+
+                when {
+                    titleText.isBlank() -> titleEditName.error = getString(R.string.blank_text)
+                    boardData.existsBoard(titleText) -> titleEditName.error = getString(R.string.exists_text)
                 }
-                // create board
-                val boardInfo = BoardInfo(UUID.randomUUID().toString(), -1,
-                    editTextName.text.toString())
-                DataInterface.getDataInterface(this@MainActivity).saveBoard(boardInfo)
-                // end create
-                adapter.notifyItemInserted(adapter.itemCount)
+                if (titleText.isBlank() || boardData.existsBoard(titleText)) return@positiveButton
+
+                boardData.createBoardInfo(titleText)
+                mainRecyclerViewAdapter.notifyItemInserted(mainRecyclerViewAdapter.itemCount)
                 alertDialog.dismiss()
             }
         }
-        return alertDialog
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        coroutineContext.cancel()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu?.add(0, 1, 0, "Delete")?.setIcon(android.R.drawable.ic_menu_edit)?.setShowAsAction(1)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == 1) {
+            mainRecyclerViewAdapter.deleteModeChange(!mainRecyclerViewAdapter.isDeleteMode())
+            activityMainBinding.addFloatingActionButton.visibility = if (mainRecyclerViewAdapter.isDeleteMode()) View.GONE else View.VISIBLE
+            item.setIcon(if (mainRecyclerViewAdapter.isDeleteMode()) android.R.drawable.ic_menu_save else android.R.drawable.ic_menu_edit)
+            return true
+        }
+        return false
     }
 }
