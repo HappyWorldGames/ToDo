@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0, 1, 0, "Delete")?.setIcon(android.R.drawable.ic_menu_edit)?.setShowAsAction(1)
+        menu?.add(0, 1, 0, R.string.delete)?.setIcon(android.R.drawable.ic_menu_edit)?.setShowAsAction(1)
         return true
     }
 
