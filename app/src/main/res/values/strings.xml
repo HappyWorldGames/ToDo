@@ -8,6 +8,7 @@
     <string name="done">Done</string>
     <string name="save">Save</string>
     <string name="edit">Edit</string>
+    <string name="rename">Rename</string>
 
     <string name="blank_text">This field can not be blank</string>
     <string name="exists_text">Title is already used.</string>

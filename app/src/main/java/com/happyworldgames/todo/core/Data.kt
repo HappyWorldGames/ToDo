@@ -16,6 +16,8 @@ class Data(context: Context) {
     private val projectsDir = File(context.filesDir, "projects")
 
     fun saveBoardInfo(boardInfo: BoardInfo) {
+        deleteBoardInfo(boardInfo.title) // TODO Костыль
+
         val projectDir = File(projectsDir, boardInfo.title)
         if (!projectDir.exists()) projectDir.mkdirs()
 
