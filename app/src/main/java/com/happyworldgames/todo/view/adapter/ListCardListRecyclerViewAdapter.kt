@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
 import com.happyworldgames.todo.R
 import com.happyworldgames.todo.core.BoardInfo
-import com.happyworldgames.todo.core.CardInfo
 import com.happyworldgames.todo.core.CardListInfo
 import com.happyworldgames.todo.core.Data
 import com.happyworldgames.todo.databinding.CardListAddRecyclerViewAdapterItemBinding
@@ -60,7 +59,8 @@ class ListCardListRecyclerViewAdapter(private val boardData: Data, private val b
         return when (viewType) {
             ADD_TYPE -> CardListAddViewHolder(itemView)
             ADD_NAME_TYPE -> CardListFieldViewHolder(itemView)
-            else -> CardListViewHolder(itemView)
+            VIEW_TYPE -> CardListViewHolder(itemView)
+            else -> throw Throwable("Unknown type")
         }
     }
 
@@ -179,7 +179,7 @@ class ListCardListRecyclerViewAdapter(private val boardData: Data, private val b
                     }
                 }
 
-                val cardListRecyclerViewAdapter = CardListRecyclerViewAdapter(boardData, boardInfo, position) // TODO Adapter
+                val cardListRecyclerViewAdapter = CardListRecyclerViewAdapter(boardData, boardInfo, position)
                 holder.cardListRecyclerViewAdapterItemBinding.cardListRecyclerView.apply {
                     layoutManager = LinearLayoutManager(context)
                     adapter = cardListRecyclerViewAdapter
