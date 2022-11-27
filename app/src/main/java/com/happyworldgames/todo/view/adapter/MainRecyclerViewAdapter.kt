@@ -28,7 +28,7 @@ class MainRecyclerViewAdapter(private val boardData: Data) : RecyclerView.Adapte
         holder.mainRecyclerViewAdapterItemBinding.cardView.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, BoardActivity::class.java)
-            intent.putExtra(BoardActivity.InputBoardName, boardName)
+            intent.putExtra(BoardActivity.INPUT_BOARD_NAME, boardName)
             context.startActivity(intent)
         }
 

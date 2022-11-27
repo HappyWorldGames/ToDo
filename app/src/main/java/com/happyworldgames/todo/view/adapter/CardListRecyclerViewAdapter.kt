@@ -1,5 +1,6 @@
 package com.happyworldgames.todo.view.adapter
 
+import android.content.Intent
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.happyworldgames.todo.CardActivity
 import com.happyworldgames.todo.R
 import com.happyworldgames.todo.core.BoardInfo
 import com.happyworldgames.todo.core.CardInfo
@@ -88,6 +90,15 @@ class CardListRecyclerViewAdapter(private val boardData: Data, private val board
             }
             is CardListViewHolder -> {
                 holder.cardListAdapterItemBinding.cardTitle.text = cardList[position].title
+                holder.cardListAdapterItemBinding.cardBackground.setOnClickListener {
+                    val context = holder.itemView.context
+                    val intent = Intent(context, CardActivity::class.java).apply {
+                        putExtra(CardActivity.INPUT_BOARD_NAME, boardInfo.title)
+                        putExtra(CardActivity.CARD_LIST_POSITION, cardListPosition)
+                        putExtra(CardActivity.CARD_POSITION, position)
+                    }
+                    context.startActivity(intent)
+                }
             }
         }
     }

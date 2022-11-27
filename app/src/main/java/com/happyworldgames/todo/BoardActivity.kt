@@ -13,12 +13,12 @@ import com.happyworldgames.todo.view.adapter.ListCardListRecyclerViewAdapter
 class BoardActivity : AppCompatActivity() {
 
     companion object {
-        const val InputBoardName = "BoardName"
+        const val INPUT_BOARD_NAME = "BoardName"
     }
 
     private val activityBoardBinding by lazy { ActivityBoardBinding.inflate(layoutInflater) }
 
-    private val boardName by lazy { intent.getStringExtra(InputBoardName)?:"" }
+    private val boardName by lazy { intent.getStringExtra(INPUT_BOARD_NAME)?:"" }
     private val boardData by lazy { Data(this as Context) }
     private val boardInfo by lazy { boardData.loadBoardInfo(boardName) }
 
